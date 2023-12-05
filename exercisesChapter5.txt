@@ -1,0 +1,67 @@
+
+Exercise: The About API
+
+1. 
+- http://localhost:3000/graphql?query=query+{+about+} in browser: Playground opens, header: GET, 200
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+- curl http://localhost:3000/graphql?query=query+\{+about+\} in terminal: {"data":{"about":"Hello World"}}
+- curl -v http://localhost:3000/graphql?query=query+\{+about+\} in terminal: "-v" shows header: request: GET, response: status 200 ok, Accept: */*
+
+- http://localhost:3000/graphql in browser: Playground opens, header: 200, GET
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+- curl http://localhost:3000/graphql in terminal: "GET query missing"
+- curl -v http://localhost:3000/graphql - "-v" shows header: GET, status 400 bad request, "GET query missing", Accept: */*
+
+Different Results
+Apollo Server makes distinction by checking "accept" in request header - 
+if "text/html" -> returns Playground
+- curl http://localhost:3000/graphql --header "Accept: text/html" - shows HTML from playground
+
+2.
+Pro/Con of GET/POST for read-only API calls
+GET request: lot of types accepted
+POST request: Accepted type not defined - more safe???
+
+-> POST more save because browsers cache GET requests, different browsers do this differently
+API results shouldn't be cached, just fetched from the Server
+When cache is necessary (large images), GET is better
+
+
+
+
+Exercise: The List API
+
+1.
+Schema: issueList: [Issue!]!
+
+query { 
+  issueList 
+}
+-> error, "message": "Field \"issueList\" of type \"[Issue!]!\" must have a selection of subfields. Did you mean \"issueList { ... }\"?"
+valid syntax, but not like defined in schema - server responds with error
+Adding a list in the request is necessary 
+
+query { 
+  issueList { }
+}
+-> nothing happens
+- syntax error - playground did not send the query to the server
+(subfield name expected within curly braces)
+
+2.
+invalid subfield:
+makes request
+ "message": "Cannot query field \"test\" on type \"Issue\".",
+ 400 bad request
+
+ 3.
+ query { 
+  about
+  issueList { 
+  	id
+    owner
+    title
+  }
+}
+
+
