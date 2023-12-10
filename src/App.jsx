@@ -1,16 +1,50 @@
-const continents = ["Africa", "America", "Asia", "Australia", "Europa"];
-const helloContinents = Array.from(continents, c => `Hello ${c}!`);
-const message = helloContinents.join(" ");
+"use strict";
 
 
-/*       const element = React.createElement("div", {title: "Outer div"},
-React.createElement("h1", {className: "title"}, "Hello World")
-); */
-const element = (
-    // not HTML, not a string! It's JSX
-    <div title="Outer div">
-        <h1>{message}</h1>
-    </div>
-);
+const dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
 
-ReactDOM.render(element, document.getElementById("contents"));
+// when creating a JS-Object out of a JSON-String when using JSON.parse():
+// loops over each entry while creating the new Object and the keys and values can be used as arguments in the reviver function here:
+function jsonDateReviver(key, value) {
+  if (dateRegex.test(value)) return new Date(value);
+  return value;
+}
+
+
+async function loadData() {
+  const query = `query {
+    issueList {
+      id title status owner
+      created effort due
+    }
+  }`;
+/*   const query = `mutation issueAdd($issue: IssueInputs!) {
+    issueAdd(issue: $issue) {
+      id
+    }
+  }` */
+
+  const response = await fetch('/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify({ query })
+  });
+
+
+  // body: is JSON-string here:
+  const body = await response.text();
+  // converting JSON-string to a javaScript Object:
+  // reviver-function: makes JS-Date-Object out of Date-String
+  const result = JSON.parse(body, jsonDateReviver);
+
+  // Renders IssuesList with two items as two strings in DOM
+  // Ich verstehe React noch nicht besser
+  ReactDOM.render(React.createElement("h1", null, `${JSON.stringify(result.data.issueList[0])},
+  ${JSON.stringify(result.data.issueList[1])}`), document.getElementById("contents"));
+}
+
+loadData();
+
+
+
+

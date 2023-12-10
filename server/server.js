@@ -1,9 +1,10 @@
 const fs = require("fs");
 const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer, UserInputError } = require("apollo-server-express");
 // importing class for scalar type resolver
 const { GraphQLScalarType } = require("graphql");
 const { Kind } = require("graphql/language");
+const { log } = require("console");
 
 
 let aboutMessage = "Issue Tracker API v1.0";
@@ -32,7 +33,8 @@ const issuesDB = [
     },
     // Apollo calls this method when the scalar is provided by a client as a GraphQL variable for an argument - ??"New Date" created in FE and sent as argument??
     parseValue(value) {
-        return new Date(value);
+        const dateValue = new Date(value);
+        return isNaN(dateValue) ? undefined : dateValue;
     },
     // called in normal case, field is specified in-place in query
     // When an incoming query string includes the scalar as a hard-coded argument value, that value is part of the query document's abstract syntax tree (AST).
@@ -42,9 +44,13 @@ const issuesDB = [
         // asks if its a strings, converts or sends undefined back
         return (ast.kind == Kind.STRING) ? new Date(ast.value) : undefined;
     } */
-        parseLiteral(ast) {
-        const date = new Date(ast.value)
-        return (ast.kind == Kind.STRING) && date ? date : undefined;
+    parseLiteral(ast) {
+        if (ast.kind == Kind.STRING) {
+            const value = new Date(ast.value);
+            return isNaN(value) ? undefined : value;
+        }
+/*     const date = new Date(ast.value)
+    return (ast.kind == Kind.STRING) && date ? date : undefined; */
     }
 
 
@@ -73,10 +79,23 @@ function setAboutMessage(_, args) {
     return aboutMessage = args.message;
 }
 
-function issueAdd(_, { issue } ) {
+function validateIssue(issue) {
+    const errors = [];
+    if (issue.title.length < 3) {
+        errors.push('Field "title" must be at least 3 characters long.');
+    }
+    if (issue.status == "Assigned" && !issue.owner) {
+        errors.push('Field "owner" is required when status is "Assigned"')
+    }
+    if (errors.length > 0) {
+        throw new UserInputError('Invalid input(s)', { errors });
+      }
+}
+
+function issueAdd(_,{ issue }) {
+    validateIssue(issue);
     issue.created = new Date();
     issue.id = issuesDB.length + 1;
-    if (issue.status === undefined) issue.status = "New";
     issuesDB.push(issue);
     return issue;
 }
@@ -86,6 +105,10 @@ function issueAdd(_, { issue } ) {
 const server = new ApolloServer({
     typeDefs: fs.readFileSync("./server/schema.graphql", "utf-8"),
     resolvers,
+    formatError: error => {
+        console.log(error);
+        return error;
+    }
 });
 
 // Initating application

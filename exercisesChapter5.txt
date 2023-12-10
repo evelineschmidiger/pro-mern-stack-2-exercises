@@ -148,6 +148,19 @@ input IssueInputs {
 }
 
 
+Exercise: Create API Integration
+
+1. x
+
+
+
+
+Exercise: Query Variables
+
+1. 
+parseValue is called
+
+
 
 
 
