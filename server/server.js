@@ -1,6 +1,9 @@
 const fs = require("fs");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
+// importing class for scalar type resolver
+const { GraphQLScalarType } = require("graphql");
+const { Kind } = require("graphql/language");
 
 
 let aboutMessage = "Issue Tracker API v1.0";
@@ -19,6 +22,35 @@ const issuesDB = [
     },
   ];
 
+  // using GraphQLScalarType-class from graphql-package
+  // Object with properties (name & description) as argument to constructor-function of GraphGLScalarType
+  const GraphQLDate = new GraphQLScalarType({ 
+    name: "GraphQLDate",
+    description: "A Date() type in GraphQL as a scalar",
+    serialize(value) {
+        return value.toISOString();
+    },
+    // Apollo calls this method when the scalar is provided by a client as a GraphQL variable for an argument - ??"New Date" created in FE and sent as argument??
+    parseValue(value) {
+        return new Date(value);
+    },
+    // called in normal case, field is specified in-place in query
+    // When an incoming query string includes the scalar as a hard-coded argument value, that value is part of the query document's abstract syntax tree (AST).
+    // Apollo Server calls the parseLiteral method to convert the value's AST representation to the scalar's back-end representation.
+/*     parseLiteral(ast) {
+        // if undefinded is returned: type could not be converted, error
+        // asks if its a strings, converts or sends undefined back
+        return (ast.kind == Kind.STRING) ? new Date(ast.value) : undefined;
+    } */
+        parseLiteral(ast) {
+        const date = new Date(ast.value)
+        return (ast.kind == Kind.STRING) && date ? date : undefined;
+    }
+
+
+  });
+
+
 
 
 const resolvers = {
@@ -28,16 +60,25 @@ const resolvers = {
     },
     Mutation: {
         setAboutMessage, // ES2015 Object Property Shorthand, setAboutMessage: setAboutMessage -> setAboutMessage
+        issueAdd,
     },
+    GraphQLDate,
 };
 
 function issueList() {
     return issuesDB;
 }
 
-
 function setAboutMessage(_, args) {
     return aboutMessage = args.message;
+}
+
+function issueAdd(_, { issue } ) {
+    issue.created = new Date();
+    issue.id = issuesDB.length + 1;
+    if (issue.status === undefined) issue.status = "New";
+    issuesDB.push(issue);
+    return issue;
 }
 
 // initialising the GraphQL server

@@ -29,6 +29,8 @@ When cache is necessary (large images), GET is better
 
 
 
+
+
 Exercise: The List API
 
 1.
@@ -63,5 +65,91 @@ makes request
     title
   }
 }
+
+
+
+
+
+
+
+Exercise: Custom Scalar types
+
+1. 
+with GraphQLDate-resolver: "2019-01-15T00:00:00.000Z", .toISOString() - expected
+without GraphQLDate-resolver: "2019-01-15T00:00:00.000Z" no .toISOString() used - why the same?
+
+"The fact that the schema defined GraphQLDate as a scalar type has made the default resolver for the Date object use toJSON() instead of toString();
+- There is a default resolver when no one is defined
+- uses toJSON() (does the same as toISOString())
+
+2. 
+toJSON() vs toISOString()
+toJSON() does not check if the value is a valid date object
+
+by having not a date as a value:
+issuesDB: created: new Date('blah')
+
+with resolver, toISOString():
+      "message": "Invalid time value",
+without resolver, toJSON():
+      "created": null,
+
+"A console.log() message could be added in the serialize function.
+Alternatively, if you temporalily change the conversion to use Date.toString() instead of Date.toISOString(),
+you can see that the conversion is being done differently"
+
+
+
+
+Exercise: The Create API
+
+1. 
+- input complex "IssueInputs" is similar to type "Issue" - more obvious that it's the same set of data (here it cannot be the same)
+- in the resolver function issueAdd we can destructure the whole issue object, so we have key-value pairs and not just an args-array
+
+2. 
+Integer, other possible values: String, Float
+
+"IntValue" in Terminal - 404 Bad Request (only in Browser)
+
+set ast.kind to Kind.INT, other posssible values: Kind.FLOAT, Kind.BOOLEAN, Kind.ENUM
+
+3. 
+"errors": 
+      "message": "Invalid time value",
+
+Its an optional field and it should not throw an error when input is rubbish
+
+Error-Handling in parseLiteral-function, it cannot create a new Date there
+Sending undefined back when not able to create new Date
+
+    parseLiteral(ast) {
+        function isValidDate(dateObject){
+            return new Date(dateObject).toString() !== 'Invalid Date';
+        }
+        const date = new Date(ast.value);
+        return ((ast.kind == Kind.STRING) && isValidDate(date)) ? date : undefined;
+    }
+
+    ->
+     "errors":
+        "message": "Expected type GraphQLDate, found \"abcdef\".",
+
+
+Solution: later in this Chapter
+
+4. Schema:
+
+Setting default value for status:
+input IssueInputs {
+    ...
+    status: String = "New"
+    ...
+}
+
+
+
+
+
 
 
