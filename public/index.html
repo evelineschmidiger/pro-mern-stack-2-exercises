@@ -8,13 +8,24 @@
   <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
-  <!-- Polyfill, in JavaSript geschriebener Programmcode-Baustein, Workaround - für ältere Browser   -->
+  <!-- Polyfill, in JavaSript geschriebener Programmcode-Baustein, Workaround - für ältere Browser -->
   <script src="https://unpkg.com/@babel/polyfill@7/dist/polyfill.min.js"></script>
+
+  <!-- Babel: because Browsers don't understand JSX - transforms JSX to regular Javascript -->
+  <!-- We do it in build-time instead of run-time -->
+
+  <!-- React-Class "table.bordered" for styling tables -->
+  <style>
+    table.bordered-table th, td {border: 1px solid silver; padding: 4px;}
+    table.bordered-table {border-collapse: collapse;}
+  </style>
+
 </head>
 
 <body>
   <div id="contents"></div>
 
+  <!-- App.js created from App.jsx "watch" -->
   <script src="/App.js"></script>
 </body>
 

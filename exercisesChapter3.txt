@@ -1,0 +1,75 @@
+
+EXERCISE: REACT CLASSES
+
+1. 
+"jsx epressions must have one parent element
+solution: wrap them in a parent div-element
+
+--- or using a Fragment component
+
+2.
+error shows in browser console 
+"react-dom.development.js:24963 Uncaught (in promise) Error: Target container is not a DOM element."
+undefined variable references: in node "problems"
+
+--- React Error: React prints in Browser Console
+--- Regular JavaScript Errors also printed in Browser Console (from compiled code)
+
+
+EXERCISE: COMPOSING COMPONENTS
+
+1. 
+No HTML element corresponding the React.Fragment component visible in DOM
+- no wrapper div used: doesn't mess with the CSS styling
+
+--- eg: when table-rows get rendered in a <tbody> element - we don't want a wrapper div (invalid DOM tree)
+
+
+EXERCISE: PASSING DATA USING PROPERTIES
+
+1. 
+Syntax Highlighting - not correct, when in object: should work - border not directly supported, just the "style" attribute
+
+--- Border attribute not supported - not dispayed
+
+2.
+Double curly braces inside table:
+- outer curly braces: to tell React that we use a JavaScript-expression
+- inner curly braces: Because we pass the data as a JavaScript-object
+
+3. 
+I don't know PHP
+
+--- <?php ... ?> full fledged programms, in JavaScript within {} just expression (no for-loops etc)
+
+
+EXERCISE: PASSING DATA USING CHILDREN
+
+1.
+Passing data as props vs children:
+nested data better as children
+
+--- props: for any kind of data - simple data, multiple components, when component is not a natural child content of the parent
+--- children: needs to be an element, can be deeply nested - deeply nested components
+
+EXERCISE: DYNAMIC COMPOSITION
+
+1.
+All keys that are unique, "created"-date would be fine as well
+
+--- Array Index - but if something changes it re-renders every row
+--- more efficient to use UUID
+--- React uses Key to "identify" the row - same key, same row, just shuffles them but doesn't re-render
+
+2.
+Because now we have more fields - more efficient
+
+--- only pass them seperately when number of properties is a small subset of the full set of properties of the object
+
+3.
+Works fine as well
+We can use JavaScript-functions inside curly braces, not just expressions
+
+--- Anything within the curly braces is parsed as a JavaScript expression
+--- Deeper nesting with another set of curly braces within the nested piece of JSX possible
+

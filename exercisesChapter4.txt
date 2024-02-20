@@ -1,0 +1,62 @@
+
+EXERCISE: INITIAL STATE
+
+1. 
+No
+I wouldn't handle it it the state, I would do it elsewhere in the code.
+Component gets re-rendered when isssues change - style can change according to isssues
+
+--- color is a derived (abgeleitet) value - calculate values within render()-method
+
+EXERCISE: UPDATING STATE
+
+1.
+First new Issue: ID is first "3" and as soon as the second new issue arrives, it's ID changes to 4.
+The 3rd and 4rth issue in table have then both ID = 4
+Why?
+Because the key is issues.id - React reassigns the issues to IDs
+it recognizes that two issues look the same and then assigns it to the same id
+
+--- Console Error: "Warning: Encountered two children with the same key, `4`"
+--- We use the same Object twice to create an issue - Better: Object.assign()
+
+2.
+5 times
+first empty array: 0
+second with two issues: 2
+third with three issues: 3
+
+console: rendered x 2, rendered x 3
+
+--- 5 times, render is called does not mean DOM is updated! Only virtual DOM is recreated on each render
+--- REAL DOM update only when there are differences between virtual and real DOM
+
+EXERCISE: LIFTING STATE UP
+
+1. 
+Remove binding from createIssue:
+"Uncaught TypeError: Cannot read properties of undefined (reading 'issues')"
+when createIssue is called within issueAdd: no state with issues found!
+"this" needs to refer to issueList
+
+--- Error: undefined is not an object
+--- this.state is undefined - not the correct "this"
+
+EXERCISE: EVENT HANDLING
+
+1.
+Save in Cookies
+
+--- Local Storage in Browser or save in server
+
+2.
+when preventDefault() is not there: not working
+both times: no values in URL
+http://localhost:3000/?owner=&title=
+
+--- without preventDefault: default is doing a GET HTTP request with form values
+--- without preventDefault: refreshes page with each request
+
+3.
+
+

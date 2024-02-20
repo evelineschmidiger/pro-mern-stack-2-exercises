@@ -1,0 +1,58 @@
+Database User
+
+EXERCISE: MONGODB BASICS
+1. db.employees.find(). -> press 2 times tab
+db.employees.find().allowDiskUse         db.employees.find().allowPartialResults
+db.employees.find().collation            db.employees.find().comment
+db.employees.find().hasNext              db.employees.find().hint
+db.employees.find().limit                db.employees.find().max
+db.employees.find().maxAwaitTimeMS       db.employees.find().min
+db.employees.find().next                 db.employees.find().noCursorTimeout
+db.employees.find().oplogReplay          db.employees.find().readPref
+db.employees.find().returnKey            db.employees.find().size
+db.employees.find().tailable             db.employees.find().showRecordId
+db.employees.find().readConcern          db.employees.find().projection
+db.employees.find().skip                 db.employees.find().sort
+db.employees.find().explain              db.employees.find().batchSize
+db.employees.find().close                db.employees.find().forEach
+db.employees.find().tryNext              db.employees.find().isClosed
+db.employees.find().isExhausted          db.employees.find().itcount
+db.employees.find().toArray              db.employees.find().pretty
+db.employees.find().map                  db.employees.find().maxTimeMS
+db.employees.find().objsLeftInBatch
+EXERCISE: MONOGDB CRUD OPERATIONS
+1.
+db.employees.insertOne({
+  name: {first: 'John', middle: 'H', last: 'Doe'},
+  age: 22
+})
+
+db.employees.find({ "name.middle": {$exists: true} })
+
+2. It's a regular Javascript Object
+
+3. db.employees.update({_id: ObjectId("65b1741de7b737e91861d4ac")}, {"name.middle": {$unset: null}})
+MongoInvalidArgumentError: Update document requires atomic operators
+
+4. find()-method performs better - improves query performance
+1: ascending sort order
+-1: descending sort order
+
+
+
+EXERCISE: SCHEMA INITIALISATION
+1. Doing the same thing with Node: needs Packages like NPM driver
+2. Text Index for string content
+
+EXERCISE: READING FROM MONGODB
+1. How to stop database server?
+- connection object is reused, does reconnect when database is available again
+2. Connection Settings: Set Interval onger than 30 Seconds - driver retries to connect for a longer period of time
+3. Return data with toArray() - too big: 
+find()-method returns a cursor -> return documents in batches rather than all at once
+- iterate over cursor.Next() (not so much server memory)
+- use find().limit(100) - returns only the first 100 documents, or paginate with skip()
+EXERCISE: WRITING TO MONGODB
+1. better to use find() because it looks at the database, better in case it didn't work
+
+
